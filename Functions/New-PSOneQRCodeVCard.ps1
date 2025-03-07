@@ -15,8 +15,20 @@
             .PARAMETER Company
             Company name
 
+            .PARAMETER Title
+            Title
+
             .PARAMETER Email
             email address
+
+            .PARAMETER Mobile
+            Mobile phone number
+
+            .PARAMETER Phone
+            Telephone number
+
+            .PARAMETER Address
+            Postal address
 
             .PARAMETER Width
             Height and Width of generated graphics (in pixels). Default is 100.
@@ -53,14 +65,27 @@
         [string]
         $LastName,
 
-        [Parameter(Mandatory)]
         [string]
         $Company,
 
-        [Parameter(Mandatory)]
+        [string]
+        $Title,
+
         [AllowEmptyString()]
         [string]
         $Email,
+
+        [AllowEmptyString()]
+        [string]
+        $Mobile,
+
+        [AllowEmptyString()]
+        [string]
+        $Phone,
+
+        [AllowEmptyString()]
+        [string]
+        $Address,
         
         [ValidateRange(10, 2000)]
         [int]
@@ -84,16 +109,24 @@
         $LightColorRgba = @(255, 255, 255)
     )
 
+    $Name = "$FirstName $LastName"
+
     $payload = @"
 BEGIN:VCARD
 VERSION:3.0
 KIND:individual
 N:$LastName;$FirstName
-FN:$FirstName $LastName
-ORG:$Company
-EMAIL;TYPE=INTERNET:$Email
-END:VCARD
+FN:$Name
 "@
+
+    if ($Company) { $payload += "ORG:$Company`n" }
+    if ($Title) {  $payload += "TITLE:$Title`n" }
+    if ($Email) { $payload += "EMAIL;TYPE=INTERNET:$Email`n" }
+    if ($Mobile) { $payload += "TEL;TYPE=CELL:$Mobile`n" }
+    if ($Phone) { $payload += "TEL;TYPE=WORK:$Phone`n" }
+    if ($Address) { $payload += "ADR;TYPE=WORK:$Address`n" }
+
+    $payload += "END:VCARD"
 
     $splat = @{
         payload        = $payload

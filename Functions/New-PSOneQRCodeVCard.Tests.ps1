@@ -8,12 +8,24 @@ Describe 'New-PSOneQRCodeVCard' {
         $Global:defaultQrCodePath | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It 'defaults to file based output' {
+    It 'defaults to file based output and use mandatory input' {
+        $splat = @{
+            FirstName = 'Test'
+            LastName  = 'Test'
+        }
+        New-PSOneQRCodeVCard @splat
+
+        Get-Item $Global:defaultQrCodePath | Should -Exist
+    }
+
+    It 'defaults to file based output and use optional input' {
         $splat = @{
             FirstName = 'Test'
             LastName  = 'Test'
             Company   = 'Test'
+            Title     = 'Mr'
             Email     = 'tst@test.test'
+            Mobile    = '00123456789'
         }
         New-PSOneQRCodeVCard @splat
 
